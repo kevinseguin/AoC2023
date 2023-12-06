@@ -1,7 +1,6 @@
  
 const fs = require("fs") 
-const { type } = require("os")
-const { nextTick } = require("process")
+ 
 const _  = require("underscore")
 
 const lines = fs.readFileSync("data.txt").toString().split("\n")
