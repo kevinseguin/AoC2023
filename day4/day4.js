@@ -1,36 +1,53 @@
  
 const fs = require("fs") 
+const { type } = require("os")
 const _  = require("underscore")
 
-const lines = fs.readFileSync("data.txt").toString().split("\n")
+const lines = fs.readFileSync("testdata.txt").toString().split("\n")
 
-var gt = 0 
+var scratchTickets = new Array()
+
+class scratchTicket {  
+
+    constructor(cardno, winningNumbers, myNumbers) { 
+        this.cardNumber = cardno
+        this.winningNumbers = winningNumbers
+        this.myNumbers = myNumbers
+        this.ticketTotal  = 0
+        this.play()
+    }
+
+    play = () => { 
+        var wins = 0
+
+        _.forEach(this.myNumbers, (num) => {
+            if ( _.contains(this.winningNumbers, num)) {
+                wins++
+                if (this.ticketTotal == 0) { 
+                    this.ticketTotal = 1
+                } else {
+                    this.ticketTotal *= 2  
+                }
+               
+            } 
+        }) 
+         return {totalWins : wins, totalPoints: this.ticketTotal}
+    }
+
+}
 
 _.forEach(lines, function(ticket) {
     var cardNumber = ticket.split(":")[0].split(" ")[1]
-    var winningNumbers = ticket.split(":")[1].split("|")[0].trim().split(" ")
-    var myNumbers = _.filter(ticket.split(":")[1].split("|")[1].trim().split(" "), function(num) { if ( parseInt(num) != NaN) return num })
+    var winningNumbers = ticket.split(":")[1].split("|")[0].trim().split(" ").map(Number);
+    var myNumbers = _.filter(ticket.split(":")[1].split("|")[1].trim().split(" "), function(num) { if ( parseInt(num) != NaN) return num }).map(Number);
 
-    var thisTicketTotal = 0
-    console.log(`-----Ticket ${cardNumber} -----`)
-    console.log(` ${winningNumbers.join(" ")}, My Numbers: ${myNumbers.join(" ")} `)
-    
-    _.forEach(myNumbers, function(num) {
-        if ( _.contains(winningNumbers, num)) {
-            console.log(num, "is a winner")
-            if (thisTicketTotal == 0) { 
-                thisTicketTotal = 1
-            } else {
-            thisTicketTotal *= 2  
-            }
-            console.log(thisTicketTotal)
-        }
-       
-        
-     })
-     gt += thisTicketTotal
+    scratchTickets.push(new scratchTicket(cardNumber, winningNumbers, myNumbers))
    
 })
+
+var gt =0
+_.forEach(scratchTickets, ticket => {
+    gt+=ticket.ticketTotal
+})
+
 console.log(gt)
-
-
