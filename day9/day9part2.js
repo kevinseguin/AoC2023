@@ -6,10 +6,11 @@ const lines = fs.readFileSync("data.txt").toString().split("\n")
 
 obj = []
 
- _.each(lines, (line) => {
+   _.each(lines, (line) => {
    obj.push(line.replace("\r","").split(" ").map(Number))  
-})
+  })
 
+console.log(obj)
 
 addChild = (obj) => {
     obj.child = []
@@ -30,7 +31,7 @@ addChild = (obj) => {
 traverseChildren = (obj) => {
     if (obj.child) {
         traverseChildren(obj.child) 
-        obj.push(_.last(obj.child) + _.last(obj))
+        obj.unshift( _.first(obj) - _.first(obj.child) )
     }
 }
 
@@ -42,10 +43,10 @@ traverseChildren = (obj) => {
     traverseChildren(o)
  })
 
- 
+ console.log(obj)
 
 const x = _.reduce(obj, (memo, o) => {
-    return memo + _.last(o)
+    return memo + _.first(o)
 }, 0)
 
 console.log(x)
